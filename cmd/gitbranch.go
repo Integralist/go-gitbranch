@@ -19,17 +19,10 @@ func main() {
 	}
 
 	// TODO:
-	// common behaviours to move into shared package:
-	//
-	// print all branches except master/main (prefix each with incrementing
-	// number)
-	//
 	// add package descriptions
 	//
 	// NOTE:
 	// look at fastly/cli app.Run for how to pass args for testing purposes.
-	//
-	// read user input with fmt.Scanln(&someStringVar)
 
 	switch args[0] {
 	case "create":

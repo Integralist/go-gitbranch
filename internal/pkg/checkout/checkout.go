@@ -4,7 +4,7 @@ import (
 	"flag"
 	"fmt"
 
-	"github.com/integralist/go-gitbranch/internal/pkg/shared"
+	"github.com/integralist/go-gitbranch/internal/pkg/git"
 )
 
 type Flags struct {
@@ -24,7 +24,7 @@ func ParseFlags(args []string) Flags {
 
 // Process executes the underlying git command.
 func Process(flags Flags) {
-	shared.Validation()
+	git.Validation()
 	fmt.Println("name:", flags.Name)
 
 	// TODO:

@@ -3,8 +3,11 @@ package create
 import (
 	"flag"
 	"fmt"
+	"os"
+	"strings"
+	"time"
 
-	"github.com/integralist/go-gitbranch/internal/pkg/shared"
+	"github.com/integralist/go-gitbranch/internal/pkg/git"
 )
 
 type Flags struct {
@@ -24,15 +27,16 @@ func ParseFlags(args []string) Flags {
 
 // Process executes the underlying git command.
 func Process(flags Flags) {
-	shared.Validation()
-	fmt.Println("name:", flags.Name)
+	git.Validation()
 
-	// TODO:
-	//
-	// 1. normalize branch name by replacing hyphen with underscores
-	// 2. prefix branch name with 'integralist/'
-	// 3. suffix branch name with '<yyyy_mm_dd> + <normalized input>'
-	// 4. execute 'git checkout -b <branch>'
-	//
-	// https://gobyexample.com/spawning-processes
+	prefix := "integralist"
+	date := time.Now().Format("20060102")
+	normalize := strings.ReplaceAll(flags.Name, "-", "_")
+	branch := fmt.Sprintf("%s/%s_%s", prefix, date, normalize)
+
+	err := git.CreateBranch(branch)
+	if err != nil {
+		fmt.Println(err)
+		os.Exit(1)
+	}
 }

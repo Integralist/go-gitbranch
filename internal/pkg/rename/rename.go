@@ -3,8 +3,9 @@ package rename
 import (
 	"flag"
 	"fmt"
+	"os"
 
-	"github.com/integralist/go-gitbranch/internal/pkg/shared"
+	"github.com/integralist/go-gitbranch/internal/pkg/git"
 )
 
 type Flags struct {
@@ -30,9 +31,18 @@ func ParseFlags(args []string) Flags {
 
 // Process executes the underlying git command.
 func Process(flags Flags) {
-	shared.Validation()
+	git.Validation()
 	fmt.Println("name:", flags.Name)
 	fmt.Println("prefix:", flags.Prefix)
+
+	branches, err := git.GetBranches()
+	if err != nil {
+		fmt.Println(err)
+		os.Exit(1)
+	}
+
+	filtered := git.FilterBranches(branches)
+	fmt.Print(filtered)
 
 	// TODO:
 	//

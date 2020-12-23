@@ -3,8 +3,10 @@ package delete
 import (
 	"flag"
 	"fmt"
+	"os"
+	"strings"
 
-	"github.com/integralist/go-gitbranch/internal/pkg/shared"
+	"github.com/integralist/go-gitbranch/internal/pkg/git"
 )
 
 type Flags struct {
@@ -24,16 +26,43 @@ func ParseFlags(args []string) Flags {
 
 // Process executes the underlying git command.
 func Process(flags Flags) {
-	shared.Validation()
-	fmt.Println("name:", flags.Name)
+	git.Validation()
 
-	// TODO:
-	//
-	// 1. shortcircuit if name flag provided (reject if master)
-	// 2. execute 'git branch -D <branch>'
-	// 3. otherwise print all branches except master/main (prefix each with incrementing number)
-	// 4. read user input for selected branch
-	// 5. execute 'git branch -D <branch>' (reject if master)
-	//
-	// https://gobyexample.com/spawning-processes
+	if flags.Name != "" {
+		err := git.DeleteBranch(flags.Name)
+		if err != nil {
+			fmt.Println(err)
+			os.Exit(1)
+		}
+	}
+
+	branches, err := git.GetBranches()
+	if err != nil {
+		fmt.Println(err)
+		os.Exit(1)
+	}
+
+	filtered := git.FilterBranches(branches)
+
+	fmt.Println() // I like breathing space in my terminal output
+	for _, branch := range filtered {
+		fmt.Println(branch)
+	}
+
+	fmt.Printf("\nwhich branch would you like to delete? (type its number)\n\n")
+	var selected string
+	fmt.Scanln(&selected)
+
+	for _, branch := range filtered {
+		if strings.HasPrefix(branch, selected+".") {
+			selected = strings.TrimPrefix(branch, selected+". ")
+			break
+		}
+	}
+
+	err = git.DeleteBranch(selected)
+	if err != nil {
+		fmt.Println(err)
+		os.Exit(1)
+	}
 }
