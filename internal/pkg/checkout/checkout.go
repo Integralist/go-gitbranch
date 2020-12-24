@@ -1,3 +1,5 @@
+// Package checkout defines the CLI behaviours for changing branches.
+
 package checkout
 
 import (

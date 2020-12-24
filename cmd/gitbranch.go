@@ -1,3 +1,5 @@
+// Package main provides the program's CLI entry point.
+
 package main
 
 import (
@@ -17,12 +19,6 @@ func main() {
 		fmt.Println("no subcommand provided")
 		os.Exit(1)
 	}
-
-	// TODO:
-	// add package descriptions
-	//
-	// NOTE:
-	// look at fastly/cli app.Run for how to pass args for testing purposes.
 
 	switch args[0] {
 	case "create":

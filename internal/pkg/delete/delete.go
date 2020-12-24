@@ -1,3 +1,5 @@
+// Package delete defines the CLI behaviours for deleting a branch.
+
 package delete
 
 import (

@@ -1,3 +1,5 @@
+// Package git provides a thin abstraction over the git binary commands.
+
 package git
 
 import (

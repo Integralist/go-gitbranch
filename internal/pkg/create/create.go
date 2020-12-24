@@ -1,3 +1,5 @@
+// Package create defines the CLI behaviours for creating a branch.
+
 package create
 
 import (

@@ -1,3 +1,5 @@
+// Package rename defines the CLI behaviours for renaming a branch.
+
 package rename
 
 import (
@@ -24,9 +26,6 @@ func ParseFlags(args []string) Flags {
 	normalize := fs.Bool("normalize", false, "whether to normalize the given branch name")
 	prefix := fs.Bool("prefix", false, "whether to generate a unique prefix for the branch name")
 	fs.Parse(args)
-
-	// TODO: prefix should come from an environment variable rather than be
-	// hardcoded to my own username (for open-source reusability)
 
 	return Flags{
 		Branch:    *branch,
