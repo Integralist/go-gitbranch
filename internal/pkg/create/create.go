@@ -9,17 +9,17 @@ import (
 )
 
 type Flags struct {
-	Name string
+	Branch string
 }
 
 // ParseFlags defines and parses flags for the create subcommand.
 func ParseFlags(args []string) Flags {
 	fs := flag.NewFlagSet("create", flag.ExitOnError)
-	name := fs.String("name", "", "branch to create")
+	branch := fs.String("branch", "", "branch to create")
 	fs.Parse(args)
 
 	return Flags{
-		Name: *name,
+		Branch: *branch,
 	}
 }
 
@@ -27,7 +27,7 @@ func ParseFlags(args []string) Flags {
 func Process(flags Flags) {
 	git.Validation()
 
-	branch := fmt.Sprintf("%s%s", git.BranchPrefix(), git.BranchNormalize(flags.Name))
+	branch := fmt.Sprintf("%s%s", git.BranchPrefix(), git.BranchNormalize(flags.Branch))
 
 	err := git.CreateBranch(branch)
 	if err != nil {

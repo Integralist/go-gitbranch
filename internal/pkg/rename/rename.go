@@ -18,7 +18,7 @@ type Flags struct {
 
 // ParseFlags defines and parses flags for the create subcommand.
 func ParseFlags(args []string) Flags {
-	fs := flag.NewFlagSet("create", flag.ExitOnError)
+	fs := flag.NewFlagSet("rename", flag.ExitOnError)
 	branch := fs.String("branch", "", "branch to rename")
 	name := fs.String("name", "", "new branch name")
 	normalize := fs.Bool("normalize", false, "whether to normalize the given branch name")
