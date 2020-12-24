@@ -9,9 +9,6 @@ import (
 	"time"
 )
 
-const ErrGitBranch = "error executing 'git branch': %w\n"
-const NotGitDir = "you're not inside of a git directory."
-
 // IsGitDir indicates whether the user is inside of a git directory.
 //
 // We  do not want to execute any git commands if outside of a git directory
@@ -40,7 +37,7 @@ func Validation() {
 	}
 
 	if !ok {
-		fmt.Println(NotGitDir)
+		fmt.Println("you're not inside of a git directory.")
 		os.Exit(1)
 	}
 }
