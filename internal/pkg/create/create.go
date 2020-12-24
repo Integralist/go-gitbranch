@@ -29,6 +29,11 @@ func ParseFlags(args []string) Flags {
 func Process(flags Flags) {
 	git.Validation()
 
+	if flags.Branch == "" {
+		fmt.Println("you forgot the -branch flag")
+		os.Exit(1)
+	}
+
 	branch := fmt.Sprintf("%s%s", git.BranchPrefix(), git.BranchNormalize(flags.Branch))
 
 	err := git.CreateBranch(branch)
