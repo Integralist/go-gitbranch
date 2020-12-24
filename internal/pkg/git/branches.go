@@ -45,6 +45,19 @@ func Validation() {
 	}
 }
 
+// BranchPrefix generates a custom string to use as a prefix to a branch.
+func BranchPrefix() string {
+	prefix := "integralist"
+	date := time.Now().Format("20060102")
+	return fmt.Sprintf("%s/%s_", prefix, date)
+}
+
+// BranchNormalize replaces hyphens with underscores.
+func BranchNormalize(branch string) string {
+	return strings.ReplaceAll(branch, "-", "_")
+}
+
+// GetBranches retrieves all git branches.
 func GetBranches() (bytes.Buffer, error) {
 	var err bytes.Buffer
 	var out bytes.Buffer
@@ -125,14 +138,17 @@ func RenameBranch(o, n string) error {
 	return nil
 }
 
-// BranchPrefix generates a custom string to use as a prefix to a branch.
-func BranchPrefix() string {
-	prefix := "integralist"
-	date := time.Now().Format("20060102")
-	return fmt.Sprintf("%s/%s_", prefix, date)
-}
+// CheckoutBranch checks out the specified git branch.
+func CheckoutBranch(branch string) error {
+	var buf bytes.Buffer
 
-// BranchNormalize replaces hyphens with underscores.
-func BranchNormalize(branch string) string {
-	return strings.ReplaceAll(branch, "-", "_")
+	cmd := exec.Command("git", "checkout", branch)
+	cmd.Stderr = &buf
+
+	err := cmd.Run()
+	if err != nil {
+		return fmt.Errorf(buf.String())
+	}
+
+	return nil
 }
