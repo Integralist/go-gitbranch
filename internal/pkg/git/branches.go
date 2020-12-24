@@ -44,7 +44,12 @@ func Validation() {
 
 // BranchPrefix generates a custom string to use as a prefix to a branch.
 func BranchPrefix() string {
-	prefix := "integralist"
+	prefix := os.Getenv("GITBRANCH_PREFIX")
+
+	if prefix == "" {
+		prefix = "integralist"
+	}
+
 	date := time.Now().Format("20060102")
 	return fmt.Sprintf("%s/%s_", prefix, date)
 }
