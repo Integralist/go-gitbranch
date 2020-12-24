@@ -6,6 +6,7 @@ import (
 	"os"
 	"os/exec"
 	"strings"
+	"time"
 )
 
 const ErrGitBranch = "error executing 'git branch': %w\n"
@@ -107,4 +108,31 @@ func DeleteBranch(branch string) error {
 	}
 
 	return nil
+}
+
+// RenameBranch changes the name of a specified git branch.
+func RenameBranch(o, n string) error {
+	var buf bytes.Buffer
+
+	cmd := exec.Command("git", "branch", "-m", o, n)
+	cmd.Stderr = &buf
+
+	err := cmd.Run()
+	if err != nil {
+		return fmt.Errorf(buf.String())
+	}
+
+	return nil
+}
+
+// BranchPrefix generates a custom string to use as a prefix to a branch.
+func BranchPrefix() string {
+	prefix := "integralist"
+	date := time.Now().Format("20060102")
+	return fmt.Sprintf("%s/%s_", prefix, date)
+}
+
+// BranchNormalize replaces hyphens with underscores.
+func BranchNormalize(branch string) string {
+	return strings.ReplaceAll(branch, "-", "_")
 }

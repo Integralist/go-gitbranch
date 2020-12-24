@@ -34,6 +34,7 @@ func Process(flags Flags) {
 			fmt.Println(err)
 			os.Exit(1)
 		}
+		return
 	}
 
 	branches, err := git.GetBranches()

@@ -4,36 +4,50 @@ import (
 	"flag"
 	"fmt"
 	"os"
+	"strings"
 
 	"github.com/integralist/go-gitbranch/internal/pkg/git"
 )
 
 type Flags struct {
-	Name   string
-	Prefix bool
+	Branch    string
+	NewName   string
+	Normalize bool
+	Prefix    bool
 }
 
 // ParseFlags defines and parses flags for the create subcommand.
 func ParseFlags(args []string) Flags {
 	fs := flag.NewFlagSet("create", flag.ExitOnError)
-	name := fs.String("name", "", "name of the branch to create")
-	prefix := fs.Bool("prefix", false, "whether to prefix integralist/ to the branch name")
+	branch := fs.String("branch", "", "branch to rename")
+	name := fs.String("name", "", "new branch name")
+	normalize := fs.Bool("normalize", false, "whether to normalize the given branch name")
+	prefix := fs.Bool("prefix", false, "whether to generate a unique prefix for the branch name")
 	fs.Parse(args)
 
 	// TODO: prefix should come from an environment variable rather than be
 	// hardcoded to my own username (for open-source reusability)
 
 	return Flags{
-		Name:   *name,
-		Prefix: *prefix,
+		Branch:    *branch,
+		NewName:   *name,
+		Normalize: *normalize,
+		Prefix:    *prefix,
 	}
 }
 
 // Process executes the underlying git command.
 func Process(flags Flags) {
 	git.Validation()
-	fmt.Println("name:", flags.Name)
-	fmt.Println("prefix:", flags.Prefix)
+
+	if flags.Branch != "" && flags.NewName != "" {
+		err := git.RenameBranch(flags.Branch, flags.NewName)
+		if err != nil {
+			fmt.Println(err)
+			os.Exit(1)
+		}
+		return
+	}
 
 	branches, err := git.GetBranches()
 	if err != nil {
@@ -42,16 +56,39 @@ func Process(flags Flags) {
 	}
 
 	filtered := git.FilterBranches(branches)
-	fmt.Print(filtered)
 
-	// TODO:
-	//
-	// 1. shortcircuit if name flag provided
-	// 2. execute 'git branch -m <old> <new>'
-	// 3. otherwise print all branches except master/main (prefix each with incrementing number)
-	// 4. read user input for selected branch
-	// 5. read user input for new name
-	// 6. execute 'git branch -m <old> <new>' (add prefix if necessary)
-	//
-	// https://gobyexample.com/spawning-processes
+	fmt.Println() // I like breathing space in my terminal output
+	for _, branch := range filtered {
+		fmt.Println(branch)
+	}
+
+	fmt.Printf("\nwhich branch would you like to rename? (type its number)\n\n")
+	var selected string
+	fmt.Scanln(&selected)
+
+	for _, branch := range filtered {
+		if strings.HasPrefix(branch, selected+".") {
+			selected = strings.TrimPrefix(branch, selected+". ")
+			break
+		}
+	}
+
+	fmt.Printf("\nwhat's the new branch name? (remember: --prefix and --normalize)\n\n")
+	var newbranch string
+	fmt.Scanln(&newbranch)
+
+	unmodified := newbranch
+
+	if flags.Prefix {
+		newbranch = fmt.Sprintf("%s%s", git.BranchPrefix(), unmodified)
+	}
+	if flags.Normalize {
+		newbranch = fmt.Sprintf("%s%s", git.BranchPrefix(), git.BranchNormalize(unmodified))
+	}
+
+	err = git.RenameBranch(selected, newbranch)
+	if err != nil {
+		fmt.Println(err)
+		os.Exit(1)
+	}
 }

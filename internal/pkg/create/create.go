@@ -4,8 +4,6 @@ import (
 	"flag"
 	"fmt"
 	"os"
-	"strings"
-	"time"
 
 	"github.com/integralist/go-gitbranch/internal/pkg/git"
 )
@@ -29,10 +27,7 @@ func ParseFlags(args []string) Flags {
 func Process(flags Flags) {
 	git.Validation()
 
-	prefix := "integralist"
-	date := time.Now().Format("20060102")
-	normalize := strings.ReplaceAll(flags.Name, "-", "_")
-	branch := fmt.Sprintf("%s/%s_%s", prefix, date, normalize)
+	branch := fmt.Sprintf("%s%s", git.BranchPrefix(), git.BranchNormalize(flags.Name))
 
 	err := git.CreateBranch(branch)
 	if err != nil {
