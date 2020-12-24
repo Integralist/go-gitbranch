@@ -56,3 +56,7 @@ This isn't just a pointless veil over the porcelain `git` commands (I'm _very_ c
 I had this code already written in my `.bashrc` but realized that updating my esoteric bash scripting logic wasn't going to be maintainable in the long term. Although the golang equivalent is more code it's ultimately easier to work with than the more _complex_ bash script equivalent.
 
 > Note: I then create alias' in `.bashrc` to this binary and the various subcommands exposed.
+
+## RELEASES
+
+A release is generated automatically via the [`goreleaser-action`](https://github.com/goreleaser/goreleaser-action) which is triggered whenever a semver git tag is pushed (e.g. `git tag v1.0.0 -m "v1.0.0" && git push origin v1.0.0`).
