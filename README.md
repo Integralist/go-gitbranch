@@ -63,6 +63,33 @@ On top of that bash scripting doesn't lend itself to code reuse like a more robu
 
 > Note: I then create alias' in `.bashrc` to this binary and the various subcommands exposed. Refer to my [dotfiles](https://github.com/Integralist/dotfiles) for examples.
 
+### The trouble with git alias
+
+The issue with git related alias' losing autocomplete is possible to workaround, but not without some caveats.
+
+Here's the code necessary to get autocomplete to work:
+
+```bash
+alias g="git"
+__git_complete g _git
+alias gb="git branch"
+__git_complete gb _git_branch
+alias gc="git checkout"
+__git_complete gc _git_checkout
+alias gu="git push"
+__git_complete gp _git_push
+alias gd="git pull"
+__git_complete gp _git_pull
+```
+
+But the `__git_complete` command is lazy loaded internally by the bash shell, so calling it from within shell configuration files (e.g. `.bash_profile` and `.bashrc`) will cause an error as the command isn't yet loaded. It's not possible to access the function either because it's an _internal_ (i.e. _private_) function as far as the bash shell is concerned.
+
+To workaround _that_ issue, you'll need to grab the code yourself from the bash source code! See: https://github.com/git/git/blob/master/contrib/completion/git-completion.bash which of course is an ugly manual step to have to take.
+
+Now you've _still_ got to remember the various flags because (using the above alias' as an example) imagine you want to delete a branch. You execute `gb -<Tab>` expecting to see a bunch of flags like `-D` for deleting a specified branch but you in fact get nothing!? You have to use the `--` flag equivalent (e.g. `gb --<Tab>` and then you'll see `--delete` as a possible option).
+
+But there's still problems with the fact that only `--` flag equivalents have tab completion (and this is just an issue with git completion in general and not related to alias'). The biggest issue is that there is no long form flag equivalent to `git checkout -b` if you want to create a branch and check it out in one command you can only use `-b` and so you have to remember it as there's no autocomplete for it.
+
 ## RELEASES
 
 A release is generated automatically via the [`goreleaser-action`](https://github.com/goreleaser/goreleaser-action) which is triggered whenever a semver git tag is pushed (e.g. `git tag v1.0.0 -m "v1.0.0" && git push origin v1.0.0`).
