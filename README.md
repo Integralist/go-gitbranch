@@ -61,7 +61,22 @@ I had this code already written in my `.bashrc` but realized that updating my es
 
 On top of that bash scripting doesn't lend itself to code reuse like a more robust 'general programming' language. This means, although the golang equivalent is more code it's ultimately easier to work with than the more _complex_ bash script equivalent.
 
-> Note: I then create alias' in `.bashrc` to this binary and the various subcommands exposed. Refer to my [dotfiles](https://github.com/Integralist/dotfiles) for examples.
+I then create alias' in `.bashrc` to this binary and the various subcommands exposed:
+
+```bash
+# gitbranch is my own custom abstraction over the various git branch operations
+#
+# Download:
+# https://github.com/Integralist/go-gitbranch/releases
+#
+alias gbr="gitbranch rename -prefix -normalize"
+alias gc="gitbranch checkout"
+alias gcb="gitbranch create"
+alias gcm="gitbranch checkout -branch master"
+alias gbd="gitbranch delete"
+```
+
+> Note: refer to my [dotfiles](https://github.com/Integralist/dotfiles).
 
 ### The trouble with git alias
 
